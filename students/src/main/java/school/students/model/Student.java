@@ -14,6 +14,10 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Philosopher> philosophers = new LinkedList<>();
 
+    public long getId() {
+        return id;
+    }
+
     public List<Philosopher> getPhilosophers() {
         return philosophers;
     }
