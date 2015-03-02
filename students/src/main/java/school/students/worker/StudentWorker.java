@@ -80,7 +80,7 @@ public class StudentWorker implements Runnable {
                     philosopherService.save(philosopher);
                     if (student.getPhilosophers().size() == 3) {
                         log.info(student.toString() + " - Stop");
-                        this.stop();
+                        stop();
                     }
                 }
             } else {
