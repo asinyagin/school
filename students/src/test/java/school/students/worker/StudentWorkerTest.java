@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class StudentWorkerTest {
 
     /**
-     * StudentWorker can get a philosopher of a student that already have a philosopher.
+     * StudentWorker can get a philosopher of a student that already has a philosopher.
      */
     @Test
     public void getsPhilosopher() throws Exception {
