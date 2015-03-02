@@ -33,6 +33,12 @@ public class Philosopher {
         this.name = name;
     }
 
+    public Philosopher(Student student, String name, boolean fired) {
+        this.student = student;
+        this.name = name;
+        this.fired = fired;
+    }
+
     public String getName() {
         return name;
     }

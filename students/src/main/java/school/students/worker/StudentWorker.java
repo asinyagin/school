@@ -95,7 +95,7 @@ public class StudentWorker implements Runnable {
         }
     }
 
-    private Philosopher getPhilosopher() throws Exception {
+    public Philosopher getPhilosopher() throws Exception {
         Philosopher philosopher = currentPhilosopher();
         if (philosopher == null) {
             Set<String> names = student.getPhilosophers().stream()
@@ -118,7 +118,7 @@ public class StudentWorker implements Runnable {
                 .findFirst().orElse(null);
     }
 
-    private boolean askQuestionAndCheck(Philosopher philosopher, Question question) {
+    public boolean askQuestionAndCheck(Philosopher philosopher, Question question) {
         String answer = philosophers.ASK_PHIL(
                 philosopher.getName(), question.getText()
         );
