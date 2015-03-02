@@ -12,11 +12,13 @@ $ mvn install
 Run philosophers service:
 ```
 $ cd philosophers
+$ bower install
 $ mvn spring-boot:run
 ```
 
 Run students service:
 ```
 $ cd students
+$ bower install
 $ mvn spring-boot:run
 ```
