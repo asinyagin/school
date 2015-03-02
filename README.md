@@ -11,7 +11,7 @@ $ mvn install
 
 Run philosophers service:
 ```
-$ cd philosphers
+$ cd philosophers
 $ mvn spring-boot:run
 ```
 
