@@ -10,7 +10,7 @@ import school.students.service.PhilosopherService;
 import school.students.service.QuestionService;
 import school.students.service.StudentService;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -38,7 +38,7 @@ public class StudentWorker implements Runnable {
             Executors.newSingleThreadScheduledExecutor();
 
     // TODO: We store answer's hash code here, so there is a small probability of collision.
-    private final Map<Long, Map<Integer, Integer>> answers;
+    private final Map<Long, Set<Integer>> answers;
 
     public StudentWorker(
             Student student,
@@ -53,7 +53,7 @@ public class StudentWorker implements Runnable {
         this.philosopherService = philosopherService;
         this.questionService = questionService;
         answers = StreamSupport.stream(questionService.findAll().spliterator(), false)
-                .collect(Collectors.toMap(Question::getId, question -> new HashMap<>()));
+                .collect(Collectors.toMap(Question::getId, question -> new HashSet<>()));
     }
 
     public void start() {
@@ -118,11 +118,9 @@ public class StudentWorker implements Runnable {
                 philosopher.getName(), question.getText()
         ).hashCode();
 
-        Map<Integer, Integer> questionAnswers = answers.get(question.getId());
-        Integer repeats = questionAnswers.get(answer);
-        if (repeats == null) repeats = 0;
-        questionAnswers.put(answer, ++repeats);
+        Set<Integer> questionAnswers = answers.get(question.getId());
+        questionAnswers.add(answer);
 
-        return repeats == 3;
+        return questionAnswers.size() == 3;
     }
 }
