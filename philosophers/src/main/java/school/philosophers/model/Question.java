@@ -27,4 +27,12 @@ public class Question {
         this.text = text;
         this.answer = answer;
     }
+
+    public String getText() {
+        return text;
+    }
+
+    public Answer getAnswer() {
+        return answer;
+    }
 }

@@ -3,17 +3,7 @@
       .controller('StudentsController', ['$scope', '$http', StudentController]);
 
   function StudentController($scope, $http) {
-    $scope.students = [
-      {
-        id: 123,
-        philosophers: [
-          {
-            name: 'Asdf',
-            fired: true
-          }
-        ]
-      }
-    ];
+    $scope.students = [];
     $http.get('/students/')
         .success(function(data) {
           $scope.students = data;

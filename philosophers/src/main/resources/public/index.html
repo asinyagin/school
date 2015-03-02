@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html ng-app="school-philosophers">
+<head>
+    <title>Philosophers</title>
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">Philosophers</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div><h3>Philosophers</h3></div>
+        <div ng-controller="PhilosophersController">
+            <div ng-repeat="philosopher in philosophers">
+                <div>
+                    <i>{{ philosopher.name }}</i>
+                    <p ng-show="!philosopher.questions.length">Has no questions yet.</p>
+                    <ul ng-repeat="question in philosopher.questions">
+                        <li>{{ question.text }} - {{ question.answer.text }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/lib/angular/angular.min.js"></script>
+<script src="/app/app.js"></script>
+<script src="/app/philosophers.controller.js"></script>
+</body>
+</html>
