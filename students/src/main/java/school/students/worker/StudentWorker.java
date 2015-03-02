@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,6 +38,8 @@ public class StudentWorker implements Runnable {
 
     private final ScheduledExecutorService service =
             Executors.newSingleThreadScheduledExecutor();
+
+    private final Lock lock = new ReentrantLock(true);
 
     // TODO: We store answer's hash code here, so there is a small probability of collision.
     private final Map<Long, Set<Integer>> answers;
@@ -66,17 +70,21 @@ public class StudentWorker implements Runnable {
 
     @Override
     public void run() {
-        //log.info(student.toString() + " - Working");
         try {
-            Philosopher philosopher = getPhilosopher();
-            boolean check = askQuestionAndCheck(philosopher, questionService.randomQuestion());
-            if (check) {
-                philosopher.setFired(true);
-                philosopherService.save(philosopher);
-                if (student.getPhilosophers().size() == 3) {
-                    log.info(student.toString() + " - Stop");
-                    this.stop();
+            if (lock.tryLock(100, TimeUnit.MILLISECONDS)) {
+                //log.info(student.toString() + " - Working");
+                Philosopher philosopher = getPhilosopher();
+                boolean check = askQuestionAndCheck(philosopher, questionService.randomQuestion());
+                if (check) {
+                    philosopher.setFired(true);
+                    philosopherService.save(philosopher);
+                    if (student.getPhilosophers().size() == 3) {
+                        log.info(student.toString() + " - Stop");
+                        this.stop();
+                    }
                 }
+            } else {
+                throw new Exception("Could not run student worker after 100 ms of waiting.");
             }
         } catch (Exception e) {
             log.error(e);
