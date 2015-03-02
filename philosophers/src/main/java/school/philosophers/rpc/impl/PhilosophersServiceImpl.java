@@ -27,9 +27,22 @@ public class PhilosophersServiceImpl implements PhilosophersService {
     private QuestionService questionService;
 
     @Override
-    public String GET_PHIL() {
-        log.info("json-rpc: GET_PHIL()");
-        return philosopherService.randomPhilosopher().getName();
+    public String GET_PHIL(Long studentId) {
+        log.info(String.format("json-rpc: GET_PHIL(%d)", studentId));
+        int attempts = 5;
+        Philosopher philosopher = null;
+        while (attempts-- > 0) {
+            philosopher = philosopherService.randomPhilosopher();
+            if (!philosopher.getGoneStudents().contains(studentId)) break;
+        }
+        String name;
+        if (attempts == 0) {
+            log.error(String.format("Could not find philosopher with 5 attempts."));
+            name = "Error here.";
+        } else {
+            name = philosopher.getName();
+        }
+        return name;
     }
 
     @Override
@@ -49,7 +62,14 @@ public class PhilosophersServiceImpl implements PhilosophersService {
     }
 
     @Override
-    public void FIRE_PHIL(String philosopher) {
-        log.info(String.format("json-rpc: FIRE_PHIL(%s)", philosopher));
+    public void FIRE_PHIL(String name, Long studentId) {
+        log.info(String.format("json-rpc: FIRE_PHIL(%s, %d)", name, studentId));
+        Philosopher philosopher = philosopherService.findOneByName(name);
+        if (philosopher == null) {
+            log.error(String.format("Could not find philosopher with name %s.", name));
+        } else {
+            philosopher.getGoneStudents().add(studentId);
+            philosopherService.save(philosopher);
+        }
     }
 }

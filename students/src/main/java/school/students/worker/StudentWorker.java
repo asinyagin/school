@@ -41,8 +41,7 @@ public class StudentWorker implements Runnable {
 
     private final Lock lock = new ReentrantLock(true);
 
-    // TODO: We store answer's hash code here, so there is a small probability of collision.
-    private final Map<Long, Set<Integer>> answers;
+    private final Map<Long, Set<String>> answers;
 
     public StudentWorker(
             Student student,
@@ -74,9 +73,13 @@ public class StudentWorker implements Runnable {
             if (lock.tryLock(100, TimeUnit.MILLISECONDS)) {
                 //log.info(student.toString() + " - Working");
                 Philosopher philosopher = getPhilosopher();
-                boolean check = askQuestionAndCheck(philosopher, questionService.randomQuestion());
+                Question question = questionService.randomQuestion();
+                boolean check = askQuestionAndCheck(philosopher, question);
                 if (check) {
+                    philosophers.FIRE_PHIL(philosopher.getName(), student.getId());
                     philosopher.setFired(true);
+                    philosopher.setQuestion(question);
+                    philosopher.setAnswers(answers.get(question.getId()));
                     philosopherService.save(philosopher);
                     if (student.getPhilosophers().size() == 3) {
                         log.info(student.toString() + " - Stop");
@@ -84,6 +87,7 @@ public class StudentWorker implements Runnable {
                     }
                 }
             } else {
+                stop();
                 throw new Exception("Could not run student worker after 100 ms of waiting.");
             }
         } catch (Exception e) {
@@ -97,16 +101,9 @@ public class StudentWorker implements Runnable {
             Set<String> names = student.getPhilosophers().stream()
                     .map(Philosopher::getName)
                     .collect(Collectors.toSet());
-            String name = "";
-            int attempts = 5;
-            while (attempts-- > 0) {
-                name = philosophers.GET_PHIL();
-                if (!names.contains(name)) break;
-            }
-            if (attempts == 0) {
-                throw new Exception(String.format(
-                        "Could not get philosopher name with %s attempts.", attempts
-                ));
+            String name = philosophers.GET_PHIL(student.getId());
+            if (names.contains(name)) {
+                throw new Exception(String.format("Got fired philosopher %s", name));
             }
             student.getPhilosophers().add(new Philosopher(student, name));
             student = studentService.save(student);
@@ -122,11 +119,11 @@ public class StudentWorker implements Runnable {
     }
 
     private boolean askQuestionAndCheck(Philosopher philosopher, Question question) {
-        Integer answer = philosophers.ASK_PHIL(
+        String answer = philosophers.ASK_PHIL(
                 philosopher.getName(), question.getText()
-        ).hashCode();
+        );
 
-        Set<Integer> questionAnswers = answers.get(question.getId());
+        Set<String> questionAnswers = answers.get(question.getId());
         questionAnswers.add(answer);
 
         return questionAnswers.size() == 3;

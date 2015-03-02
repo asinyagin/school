@@ -26,4 +26,8 @@ public class PhilosopherService {
     public Philosopher findOneByName(String name) {
         return philosopherRepository.findOneByName(name);
     }
+
+    public Philosopher save(Philosopher philosopher) {
+        return philosopherRepository.save(philosopher);
+    }
 }

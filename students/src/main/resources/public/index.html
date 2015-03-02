@@ -21,7 +21,15 @@
                 <div>
                     <i>Student {{ student.id }}</i>
                     <ul ng-repeat="philosopher in student.philosophers">
-                        <li>{{ philosopher.name }} - {{ philosopher.fired ? "fired" : "not fired" }}</li>
+                        <li>
+                            {{ philosopher.name }}
+                            <div ng-show="philosopher.fired">
+                                Fired with reason: <i>{{ philosopher.question.text }}</i>
+                                <ul ng-show="philosopher.fired" ng-repeat="answer in philosopher.answers">
+                                    <li>{{ answer }}</li>
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>

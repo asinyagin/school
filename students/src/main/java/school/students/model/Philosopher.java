@@ -1,6 +1,7 @@
 package school.students.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Philosopher {
@@ -16,6 +17,13 @@ public class Philosopher {
     private String name;
 
     private boolean fired = false;
+
+    @ManyToOne
+    @JoinColumn(name = "question")
+    private Question question;
+
+    @ElementCollection
+    private Set<String> answers;
 
     public Philosopher() {
     }
@@ -35,5 +43,21 @@ public class Philosopher {
 
     public void setFired(boolean fired) {
         this.fired = fired;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public Set<String> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<String> answers) {
+        this.answers = answers;
     }
 }

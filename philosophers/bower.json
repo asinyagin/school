@@ -1,5 +1,5 @@
 {
-  "name": "school-students",
+  "name": "school-philosophers",
   "dependencies": {
     "bootstrap": "~3.3.2",
     "angular": "~1.3.14"
